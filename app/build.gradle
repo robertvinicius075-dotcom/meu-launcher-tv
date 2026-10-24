@@ -1,0 +1,17 @@
+
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.meulauncher.tv'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'com.meulauncher.tv'
+        minSdk 26
+        targetSdk 28
+        versionCode 1
+        versionName '1.0'
+    }
+}
