@@ -1,0 +1,277 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#101114">
+<title>Meu Launcher TV</title>
+
+<style>
+:root {
+    --bg: #101114;
+    --panel: #1b1d23;
+    --text: #ffffff;
+    --muted: #a6a8b2;
+    --accent: #b7c7ff;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 32px 48px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: Arial, sans-serif;
+    overflow-x: hidden;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+}
+
+.brand {
+    font-size: 25px;
+    font-weight: 700;
+}
+
+.top-info {
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.hero {
+    position: relative;
+    min-height: 290px;
+    border-radius: 24px;
+    padding: 36px;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse at 75% 25%, #6478a8 0%, transparent 32%),
+      linear-gradient(110deg, #242b42, #503d61 55%, #151722);
+}
+
+.hero-content {
+    max-width: 540px;
+    position: relative;
+    z-index: 1;
+}
+
+.eyebrow {
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+h1 {
+    font-size: 42px;
+    margin: 12px 0;
+}
+
+.hero p {
+    color: #e0e1e9;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.section-title {
+    font-size: 21px;
+    margin: 30px 0 16px;
+}
+
+.apps {
+    display: flex;
+    gap: 25px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+.app {
+    width: 90px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 12px;
+    outline: none;
+}
+
+.app-icon {
+    width: 68px;
+    height: 68px;
+    margin: 0 auto 9px;
+    border-radius: 23px;
+    background: var(--panel);
+    display: grid;
+    place-items: center;
+    font-size: 25px;
+    font-weight: bold;
+    border: 2px solid transparent;
+}
+
+.app:focus .app-icon,
+.app:hover .app-icon {
+    border-color: var(--accent);
+    transform: scale(1.08);
+}
+
+.recommendations {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    padding: 5px 3px 15px;
+}
+
+.movie {
+    flex: 0 0 180px;
+    height: 108px;
+    border-radius: 14px;
+    display: flex;
+    align-items: flex-end;
+    padding: 12px;
+    font-size: 15px;
+    font-weight: bold;
+    outline: none;
+    border: 2px solid transparent;
+    background: linear-gradient(140deg, #344c70, #1c2435);
+}
+
+.movie:nth-child(2) {
+    background: linear-gradient(140deg, #793c44, #2a1b2a);
+}
+
+.movie:nth-child(3) {
+    background: linear-gradient(140deg, #76603c, #30251b);
+}
+
+.movie:nth-child(4) {
+    background: linear-gradient(140deg, #3e6865, #172d31);
+}
+
+.movie:focus {
+    border-color: var(--accent);
+    transform: scale(1.04);
+}
+
+.note {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 24px;
+}
+
+@media (max-width: 700px) {
+    body {
+        padding: 20px;
+    }
+
+    .hero {
+        min-height: 240px;
+        padding: 24px;
+    }
+
+    h1 {
+        font-size: 30px;
+    }
+}
+</style>
+</head>
+
+<body>
+<header>
+    <div class="brand">Meu Launcher</div>
+    <div class="top-info">Android TV • Início</div>
+</header>
+
+<main>
+    <section class="hero">
+        <div class="hero-content">
+            <div class="eyebrow">Descubra algo novo</div>
+            <h1>Seu próximo favorito começa aqui</h1>
+            <p>Seus aplicativos, filmes e séries em um só lugar.</p>
+        </div>
+    </section>
+
+    <h2 class="section-title">Seus aplicativos</h2>
+
+    <section class="apps">
+        <div class="app" tabindex="0" onclick="abrirApp('com.netflix.mediaclient')">
+            <div class="app-icon" style="color:#ff3434">N</div>
+            Netflix
+        </div>
+
+        <div class="app" tabindex="0" onclick="abrirApp('com.disney.disneyplus')">
+            <div class="app-icon" style="color:#8caeff">D+</div>
+            Disney+
+        </div>
+
+        <div class="app" tabindex="0" onclick="abrirApp('com.amazon.amazonvideo.livingroom')">
+            <div class="app-icon" style="color:#61c8ff">P</div>
+            Prime Video
+        </div>
+
+        <div class="app" tabindex="0" onclick="abrirApp('com.google.android.youtube.tv')">
+            <div class="app-icon" style="color:#ff4d4d">▶</div>
+            YouTube
+        </div>
+
+        <div class="app" tabindex="0" onclick="abrirApp('com.google.android.tvlauncher')">
+            <div class="app-icon">▦</div>
+            Aplicativos
+        </div>
+    </section>
+
+    <h2 class="section-title">Em destaque para você</h2>
+
+    <section class="recommendations">
+        <div class="movie" tabindex="0">Grandes aventuras</div>
+        <div class="movie" tabindex="0">Noite de cinema</div>
+        <div class="movie" tabindex="0">Novas histórias</div>
+        <div class="movie" tabindex="0">Séries em destaque</div>
+    </section>
+
+    <p class="note">
+        Meu Launcher TV • Prévia inicial da interface
+    </p>
+</main>
+
+<script>
+function abrirApp(packageName) {
+    if (window.Android && typeof window.Android.launch === "function") {
+        window.Android.launch(packageName);
+    } else {
+        alert("A abertura dos aplicativos será ativada na integração Android.");
+    }
+}
+
+document.addEventListener("keydown", function(event) {
+    const itens = Array.from(
+        document.querySelectorAll('[tabindex="0"]')
+    );
+
+    const atual = itens.indexOf(document.activeElement);
+
+    if (event.key === "ArrowRight" || event.key === "ArrowDown") {
+        event.preventDefault();
+        itens[(atual + 1 + itens.length) % itens.length].focus();
+    }
+
+    if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
+        event.preventDefault();
+        itens[(atual - 1 + itens.length) % itens.length].focus();
+    }
+
+    if (event.key === "Enter" && document.activeElement) {
+        document.activeElement.click();
+    }
+});
+</script>
+</body>
+</html>
