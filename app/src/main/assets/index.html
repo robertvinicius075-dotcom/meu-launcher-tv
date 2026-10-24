@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -16,13 +15,18 @@
     --accent: #b7c7ff;
 }
 
+/* 1rem = 1,25% da largura da tela: tudo se ajusta a qualquer TV */
+html {
+    font-size: 1.25vw;
+}
+
 * {
     box-sizing: border-box;
 }
 
 body {
     margin: 0;
-    padding: 32px 48px;
+    padding: 2.4rem 4rem;
     background: var(--bg);
     color: var(--text);
     font-family: Arial, sans-serif;
@@ -33,24 +37,24 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 28px;
+    margin-bottom: 2rem;
 }
 
 .brand {
-    font-size: 25px;
+    font-size: 2.2rem;
     font-weight: 700;
 }
 
 .top-info {
     color: var(--muted);
-    font-size: 14px;
+    font-size: 1.4rem;
 }
 
 .hero {
     position: relative;
-    min-height: 290px;
-    border-radius: 24px;
-    padding: 36px;
+    min-height: 19rem;
+    border-radius: 2rem;
+    padding: 3rem;
     display: flex;
     align-items: flex-end;
     overflow: hidden;
@@ -60,87 +64,109 @@ header {
 }
 
 .hero-content {
-    max-width: 540px;
+    max-width: 45rem;
     position: relative;
     z-index: 1;
 }
 
 .eyebrow {
     color: var(--accent);
-    font-size: 13px;
+    font-size: 1.2rem;
     font-weight: bold;
-    letter-spacing: 2px;
+    letter-spacing: 0.15rem;
     text-transform: uppercase;
 }
 
 h1 {
-    font-size: 42px;
-    margin: 12px 0;
+    font-size: 3.4rem;
+    margin: 0.8rem 0;
 }
 
 .hero p {
     color: #e0e1e9;
-    font-size: 16px;
+    font-size: 1.6rem;
     line-height: 1.5;
+    margin: 0;
 }
 
 .section-title {
-    font-size: 21px;
-    margin: 30px 0 16px;
+    font-size: 1.9rem;
+    margin: 2.4rem 0 0.6rem;
 }
 
-.apps {
+/* Cada linha navegavel (apps, destaques) */
+.row {
     display: flex;
-    gap: 25px;
-    align-items: flex-start;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 1.2rem 0.6rem 1.4rem;
+}
+
+.row::-webkit-scrollbar {
+    display: none;
+}
+
+.item {
+    outline: none;
 }
 
 .app {
-    width: 90px;
+    flex: 0 0 auto;
+    width: 9.8rem;
+    margin-right: 1.8rem;
     text-align: center;
     color: var(--muted);
-    font-size: 12px;
-    outline: none;
+    font-size: 1.35rem;
+}
+
+.app-label {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .app-icon {
-    width: 68px;
-    height: 68px;
-    margin: 0 auto 9px;
-    border-radius: 23px;
+    width: 8.2rem;
+    height: 8.2rem;
+    margin: 0 auto 0.8rem;
+    border-radius: 1.8rem;
     background: var(--panel);
-    display: grid;
-    place-items: center;
-    font-size: 25px;
-    font-weight: bold;
-    border: 2px solid transparent;
-}
-
-.app:focus .app-icon,
-.app:hover .app-icon {
-    border-color: var(--accent);
-    transform: scale(1.08);
-}
-
-.recommendations {
     display: flex;
-    gap: 16px;
-    overflow-x: auto;
-    padding: 5px 3px 15px;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.8rem;
+    font-weight: bold;
+    color: var(--text);
+    border: 0.2rem solid transparent;
+    overflow: hidden;
+}
+
+.app-icon img {
+    width: 100%;
+    height: 100%;
+}
+
+.app:focus {
+    color: var(--text);
+}
+
+.app:focus .app-icon {
+    border-color: var(--accent);
+    -webkit-transform: scale(1.1);
+    transform: scale(1.1);
 }
 
 .movie {
-    flex: 0 0 180px;
-    height: 108px;
-    border-radius: 14px;
+    flex: 0 0 22rem;
+    height: 12.5rem;
+    margin-right: 1.4rem;
+    border-radius: 1.2rem;
     display: flex;
     align-items: flex-end;
-    padding: 12px;
-    font-size: 15px;
+    padding: 1.2rem;
+    font-size: 1.6rem;
     font-weight: bold;
-    outline: none;
-    border: 2px solid transparent;
+    border: 0.2rem solid transparent;
     background: linear-gradient(140deg, #344c70, #1c2435);
 }
 
@@ -158,27 +184,24 @@ h1 {
 
 .movie:focus {
     border-color: var(--accent);
+    -webkit-transform: scale(1.04);
     transform: scale(1.04);
 }
 
 .note {
     color: var(--muted);
-    font-size: 12px;
-    margin-top: 24px;
+    font-size: 1.2rem;
+    margin-top: 2rem;
 }
 
+/* Visualizacao em tela pequena (so para testar no celular) */
 @media (max-width: 700px) {
+    html {
+        font-size: 3vw;
+    }
+
     body {
-        padding: 20px;
-    }
-
-    .hero {
-        min-height: 240px;
-        padding: 24px;
-    }
-
-    h1 {
-        font-size: 30px;
+        padding: 1.6rem;
     }
 }
 </style>
@@ -200,77 +223,282 @@ h1 {
     </section>
 
     <h2 class="section-title">Seus aplicativos</h2>
-
-    <section class="apps">
-        <div class="app" tabindex="0" onclick="abrirApp('com.netflix.mediaclient')">
-            <div class="app-icon" style="color:#ff3434">N</div>
-            Netflix
-        </div>
-
-        <div class="app" tabindex="0" onclick="abrirApp('com.disney.disneyplus')">
-            <div class="app-icon" style="color:#8caeff">D+</div>
-            Disney+
-        </div>
-
-        <div class="app" tabindex="0" onclick="abrirApp('com.amazon.amazonvideo.livingroom')">
-            <div class="app-icon" style="color:#61c8ff">P</div>
-            Prime Video
-        </div>
-
-        <div class="app" tabindex="0" onclick="abrirApp('com.google.android.youtube.tv')">
-            <div class="app-icon" style="color:#ff4d4d">▶</div>
-            YouTube
-        </div>
-
-        <div class="app" tabindex="0" onclick="abrirApp('com.google.android.tvlauncher')">
-            <div class="app-icon">▦</div>
-            Aplicativos
-        </div>
-    </section>
+    <section class="row" id="apps"></section>
 
     <h2 class="section-title">Em destaque para você</h2>
-
-    <section class="recommendations">
-        <div class="movie" tabindex="0">Grandes aventuras</div>
-        <div class="movie" tabindex="0">Noite de cinema</div>
-        <div class="movie" tabindex="0">Novas histórias</div>
-        <div class="movie" tabindex="0">Séries em destaque</div>
+    <section class="row recommendations">
+        <div class="movie item" tabindex="0">Grandes aventuras</div>
+        <div class="movie item" tabindex="0">Noite de cinema</div>
+        <div class="movie item" tabindex="0">Novas histórias</div>
+        <div class="movie item" tabindex="0">Séries em destaque</div>
     </section>
 
-    <p class="note">
-        Meu Launcher TV • Prévia inicial da interface
-    </p>
+    <p class="note">Meu Launcher TV • versão 1.1</p>
 </main>
 
 <script>
-function abrirApp(packageName) {
-    if (window.Android && typeof window.Android.launch === "function") {
-        window.Android.launch(packageName);
+// Apps que aparecem primeiro (basta o nome conter a palavra, em minusculas).
+// Para mudar a ordem ou incluir outros, edite esta lista.
+var FAVORITOS = ['youtube', 'netflix', 'globoplay', 'unitv', 'uni tv'];
+
+// Usado so quando a pagina e aberta fora da TV (previa no celular)
+var DEMO = [
+    { p: 'demo.youtube', n: 'YouTube' },
+    { p: 'demo.netflix', n: 'Netflix' },
+    { p: 'demo.globoplay', n: 'Globoplay' },
+    { p: 'demo.unitv', n: 'UNI TV' }
+];
+
+var ultimaLista = '';
+
+function temAndroid() {
+    return !!(window.Android && window.Android.apps);
+}
+
+function posicaoFavorito(app) {
+    var nome = String(app.n).toLowerCase();
+    for (var i = 0; i < FAVORITOS.length; i++) {
+        if (nome.indexOf(FAVORITOS[i]) !== -1) {
+            return i;
+        }
+    }
+    return 999;
+}
+
+function ordenar(lista) {
+    return lista
+        .map(function (app, indice) {
+            return { app: app, f: posicaoFavorito(app), i: indice };
+        })
+        .sort(function (a, b) {
+            return (a.f - b.f) || (a.i - b.i);
+        })
+        .map(function (o) {
+            return o.app;
+        });
+}
+
+function abrirApp(pacote) {
+    if (!temAndroid()) {
+        alert('A abertura dos aplicativos funciona dentro da TV.');
+        return;
+    }
+    if (pacote === '__config__') {
+        window.Android.settings();
     } else {
-        alert("A abertura dos aplicativos será ativada na integração Android.");
+        window.Android.launch(pacote);
     }
 }
 
-document.addEventListener("keydown", function(event) {
-    const itens = Array.from(
-        document.querySelectorAll('[tabindex="0"]')
-    );
+function criarTile(app) {
+    var tile = document.createElement('div');
+    tile.className = 'app item';
+    tile.tabIndex = 0;
+    tile.setAttribute('data-pkg', app.p);
 
-    const atual = itens.indexOf(document.activeElement);
+    var icone = document.createElement('div');
+    icone.className = 'app-icon';
+    icone.textContent = app.s || (app.n ? app.n.charAt(0).toUpperCase() : '?');
 
-    if (event.key === "ArrowRight" || event.key === "ArrowDown") {
-        event.preventDefault();
-        itens[(atual + 1 + itens.length) % itens.length].focus();
+    var nome = document.createElement('div');
+    nome.className = 'app-label';
+    nome.textContent = app.n;
+
+    tile.appendChild(icone);
+    tile.appendChild(nome);
+    tile.onclick = function () {
+        abrirApp(app.p);
+    };
+    return tile;
+}
+
+function carregarIcones() {
+    if (!temAndroid() || !window.Android.icone) {
+        return;
+    }
+    var tiles = Array.prototype.slice.call(document.querySelectorAll('#apps .app'));
+    var i = 0;
+
+    (function proximo() {
+        var fim = Math.min(i + 3, tiles.length);
+        for (; i < fim; i++) {
+            var pacote = tiles[i].getAttribute('data-pkg');
+            if (pacote === '__config__') {
+                continue;
+            }
+            var origem = '';
+            try {
+                origem = window.Android.icone(pacote);
+            } catch (e) {
+                origem = '';
+            }
+            if (origem) {
+                var caixa = tiles[i].firstChild;
+                caixa.textContent = '';
+                var imagem = document.createElement('img');
+                imagem.src = origem;
+                caixa.appendChild(imagem);
+            }
+        }
+        if (i < tiles.length) {
+            setTimeout(proximo, 30);
+        }
+    })();
+}
+
+function carregarApps(forcar) {
+    var lista = [];
+    var bruto = '';
+
+    if (temAndroid()) {
+        try {
+            bruto = window.Android.apps();
+            lista = JSON.parse(bruto);
+        } catch (e) {
+            lista = [];
+        }
+    } else {
+        lista = DEMO;
+        bruto = 'demo';
     }
 
-    if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
-        event.preventDefault();
-        itens[(atual - 1 + itens.length) % itens.length].focus();
+    // Se nada mudou desde a ultima vez, nao mexe na tela (mantem o foco)
+    if (!forcar && bruto === ultimaLista) {
+        return;
+    }
+    ultimaLista = bruto;
+
+    var linha = document.getElementById('apps');
+    var focoAtual = linha.contains(document.activeElement)
+        ? document.activeElement.getAttribute('data-pkg') : null;
+
+    linha.innerHTML = '';
+    var todos = ordenar(lista).concat([{ p: '__config__', n: 'Configurações', s: '⚙' }]);
+    for (var i = 0; i < todos.length; i++) {
+        linha.appendChild(criarTile(todos[i]));
+    }
+    carregarIcones();
+
+    var alvo = null;
+    if (focoAtual) {
+        alvo = linha.querySelector('[data-pkg="' + focoAtual + '"]');
+    }
+    if (!alvo && (forcar || focoAtual)) {
+        alvo = linha.querySelector('.item');
+    }
+    if (alvo) {
+        alvo.focus();
+    }
+}
+
+window.recarregarApps = function () {
+    carregarApps(false);
+};
+
+window.irParaInicio = function () {
+    window.scrollTo(0, 0);
+    var primeiro = document.querySelector('#apps .item');
+    if (primeiro) {
+        primeiro.focus();
+    }
+};
+
+/* ---------- Navegacao pelo controle remoto ---------- */
+
+function listaDe(linha) {
+    return Array.prototype.slice.call(linha.querySelectorAll('.item'));
+}
+
+function centroX(elemento) {
+    var r = elemento.getBoundingClientRect();
+    return r.left + r.width / 2;
+}
+
+function mover(direcao) {
+    var atual = document.activeElement;
+    var linhas = Array.prototype.slice.call(document.querySelectorAll('.row'));
+
+    if (!atual || !atual.classList || !atual.classList.contains('item')) {
+        var primeiro = document.querySelector('.item');
+        if (primeiro) {
+            primeiro.focus();
+        }
+        return;
     }
 
-    if (event.key === "Enter" && document.activeElement) {
-        document.activeElement.click();
+    var linha = atual.parentNode;
+    var itens = listaDe(linha);
+    var posicao = itens.indexOf(atual);
+
+    if (direcao === 'left') {
+        if (posicao > 0) {
+            itens[posicao - 1].focus();
+        }
+        return;
     }
+
+    if (direcao === 'right') {
+        if (posicao < itens.length - 1) {
+            itens[posicao + 1].focus();
+        }
+        return;
+    }
+
+    var indiceLinha = linhas.indexOf(linha) + (direcao === 'down' ? 1 : -1);
+    if (indiceLinha < 0 || indiceLinha >= linhas.length) {
+        return;
+    }
+
+    var candidatos = listaDe(linhas[indiceLinha]);
+    if (candidatos.length === 0) {
+        return;
+    }
+
+    var x = centroX(atual);
+    var melhor = candidatos[0];
+    var menor = Math.abs(centroX(melhor) - x);
+    for (var i = 1; i < candidatos.length; i++) {
+        var distancia = Math.abs(centroX(candidatos[i]) - x);
+        if (distancia < menor) {
+            menor = distancia;
+            melhor = candidatos[i];
+        }
+    }
+
+    melhor.focus();
+    if (indiceLinha === 0) {
+        window.scrollTo(0, 0);
+    }
+}
+
+document.addEventListener('keydown', function (evento) {
+    var tecla = evento.keyCode;
+
+    if (tecla === 37) {
+        evento.preventDefault();
+        mover('left');
+    } else if (tecla === 39) {
+        evento.preventDefault();
+        mover('right');
+    } else if (tecla === 38) {
+        evento.preventDefault();
+        mover('up');
+    } else if (tecla === 40) {
+        evento.preventDefault();
+        mover('down');
+    } else if (tecla === 13 || tecla === 23) {
+        var atual = document.activeElement;
+        if (atual && atual.classList && atual.classList.contains('item')) {
+            evento.preventDefault();
+            if (!evento.repeat) {
+                atual.click();
+            }
+        }
+    }
+}, false);
+
+document.addEventListener('DOMContentLoaded', function () {
+    carregarApps(true);
 });
 </script>
 </body>
