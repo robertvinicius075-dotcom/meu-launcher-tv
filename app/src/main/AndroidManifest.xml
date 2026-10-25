@@ -54,9 +54,12 @@
         </activity>
 
         <!-- Tela do video (aba Ao vivo) -->
-        <activity
-            android:name=".PlayerActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
-            android:exported="false"
-            android:screenOrientation="landscape"
-            android:theme="@android:style/Theme.Material.NoActionBar.Fullscreen" />
+            <activity
+        android:name=".PlayerActivity"
+        android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+        android:exported="false"
+        android:screenOrientation="landscape"
+        android:theme="@android:style/Theme.Material.NoActionBar.Fullscreen" />
+
+</application>
+</manifest>
