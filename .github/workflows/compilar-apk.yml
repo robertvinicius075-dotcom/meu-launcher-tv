@@ -63,6 +63,19 @@ jobs:
           test -f app/src/main/AndroidManifest.xml
           test -f app/src/main/java/com/meulauncher/tv/HomeActivity.java
           test -f app/src/main/assets/index.html
+          for f in AoVivo Catalogo HomeActivity PlayerActivity; do
+            test -f "app/src/main/java/com/meulauncher/tv/$f.java" || { echo "::error title=Arquivo no lugar errado::Falta app/src/main/java/com/meulauncher/tv/$f.java"; exit 1; }
+          done
+          OUTROS=$(find app/src/main/java -name '*.java' ! -path 'app/src/main/java/com/meulauncher/tv/*')
+          if [ -n "$OUTROS" ]; then
+            echo "::error title=Arquivo java fora da pasta tv::Apague este arquivo (esta fora de com/meulauncher/tv): $OUTROS"
+            exit 1
+          fi
+          H=$(grep -c '</html>' app/src/main/assets/index.html || true)
+          if [ "$H" != "1" ]; then
+            echo "::error title=index.html com sobra de texto::O index.html tem $H marcas </html> (deveria ter 1). Sobrou texto do arquivo antigo no final. Apague o index.html e envie o novo inteiro."
+            exit 1
+          fi
 
       - name: Compilar APK
         run: |
