@@ -934,6 +934,9 @@ public class AoVivo {
     public interface Ouvinte {
         /** Chamado quando o celular envia. Devolve a mensagem que o celular vai mostrar. */
         String aoReceber(String lista, String guia);
+
+        /** Chamado quando o celular envia a chave do catalogo de filmes (TMDB). */
+        String aoReceberChave(String chave);
     }
 
     public static class Servidor {
@@ -1090,6 +1093,7 @@ public class AoVivo {
                     String texto = new String(corpo, 0, lidos, "UTF-8");
                     String lista = "";
                     String guia = "";
+                    String tmdb = "";
                     String[] campos = texto.split("&");
                     for (int i = 0; i < campos.length; i++) {
                         int igual = campos[i].indexOf('=');
@@ -1102,10 +1106,24 @@ public class AoVivo {
                             lista = valor;
                         } else if (nome.equals("guia")) {
                             guia = valor;
+                        } else if (nome.equals("tmdb")) {
+                            tmdb = valor;
                         }
                     }
                     try {
-                        mensagem = ouvinte.aoReceber(lista, guia);
+                        boolean temChave = tmdb.trim().length() > 0;
+                        boolean temLista = lista.trim().length() > 0;
+                        StringBuilder resumo = new StringBuilder();
+                        if (temChave) {
+                            resumo.append(ouvinte.aoReceberChave(tmdb));
+                        }
+                        if (temLista || !temChave) {
+                            if (resumo.length() > 0) {
+                                resumo.append(' ');
+                            }
+                            resumo.append(ouvinte.aoReceber(lista, guia));
+                        }
+                        mensagem = resumo.toString();
                         resposta(out, 200, pagina(mensagem, false));
                     } catch (Exception e) {
                         String m = e.getMessage() == null ? "Erro." : e.getMessage();
@@ -1163,6 +1181,9 @@ public class AoVivo {
             b.append("<label>Guia de programacao (EPG) - opcional</label>");
             b.append("<input name=\"guia\" placeholder=\"Link do guia XMLTV (.xml ou .xml.gz)\">");
             b.append("<p>Se a lista ja trouxer o endereco do guia, pode deixar vazio.</p>");
+            b.append("<label>Catalogo de filmes e series (TMDB) - opcional</label>");
+            b.append("<input name=\"tmdb\" placeholder=\"Chave da API do TMDB\" autocapitalize=\"off\" autocorrect=\"off\">");
+            b.append("<p>A chave fica guardada so na TV. Voce pode enviar so a lista, so a chave, ou as duas.</p>");
             b.append("<button type=\"submit\">Enviar para a TV</button></form></body></html>");
             return b.toString();
         }
