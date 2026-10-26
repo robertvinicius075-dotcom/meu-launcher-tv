@@ -45,6 +45,9 @@ public class HomeActivity extends Activity {
     private AoVivo aoVivo;
     private AoVivo.Servidor servidor;
 
+    // Catalogo de filmes e series (TMDB) da tela inicial
+    private Catalogo catalogo;
+
     private static class App {
         String pacote;
         String nome;
@@ -58,6 +61,9 @@ public class HomeActivity extends Activity {
         aoVivo = new AoVivo(getFilesDir());
         AoVivo.atual = aoVivo;
         aoVivo.carregarSalvos();
+
+        catalogo = new Catalogo(getFilesDir());
+        catalogo.carregarSalvos();
 
         try {
             criarWebView();
@@ -142,6 +148,35 @@ public class HomeActivity extends Activity {
         @JavascriptInterface
         public String fundos() {
             return listarFundosJson();
+        }
+
+        // ----- Catalogo de filmes e series (TMDB) -----
+
+        @JavascriptInterface
+        public String catalogo() {
+            return catalogo.json();
+        }
+
+        @JavascriptInterface
+        public boolean catalogoTemChave() {
+            return catalogo.temChave();
+        }
+
+        @JavascriptInterface
+        public void catalogoAuto() {
+            if (catalogo.precisaAtualizar()) {
+                atualizarCatalogo(false);
+            }
+        }
+
+        @JavascriptInterface
+        public void catalogoAtualizar() {
+            atualizarCatalogo(true);
+        }
+
+        @JavascriptInterface
+        public void catalogoRemoverChave() {
+            catalogo.removerChave();
         }
 
         // ----- Aba "Ao vivo" -----
@@ -229,6 +264,18 @@ public class HomeActivity extends Activity {
         if (servidor == null || !servidor.estaRodando()) {
             servidor = new AoVivo.Servidor(new AoVivo.Ouvinte() {
                 @Override
+                public String aoReceberChave(String chave) {
+                    try {
+                        catalogo.definirChave(chave);
+                        avisarVivo("chave", "Chave do TMDB guardada.");
+                        atualizarCatalogo(false);
+                        return "Chave do TMDB guardada. O catalogo vai aparecer na TV.";
+                    } catch (java.io.IOException erro) {
+                        throw new RuntimeException(erro.getMessage());
+                    }
+                }
+
+                @Override
                 public String aoReceber(String lista, String guia) {
                     try {
                         if (guia != null && guia.trim().length() > 0) {
@@ -253,6 +300,26 @@ public class HomeActivity extends Activity {
             return "";
         }
         return "http://" + ip + ":" + porta;
+    }
+
+    private void atualizarCatalogo(final boolean avisar) {
+        if (!catalogo.temChave() || catalogo.estaAtualizando()) {
+            if (avisar && !catalogo.temChave()) {
+                avisarVivo("catalogo-erro", "Falta a chave do TMDB.");
+            }
+            return;
+        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    catalogo.atualizar();
+                    avisarVivo("catalogo", avisar ? "Catalogo atualizado." : "");
+                } catch (Exception erro) {
+                    avisarVivo("catalogo-erro", String.valueOf(erro.getMessage()));
+                }
+            }
+        }).start();
     }
 
     private void pararServidorVivo() {
