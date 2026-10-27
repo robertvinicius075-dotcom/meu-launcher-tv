@@ -37,25 +37,23 @@ public class Catalogo {
     private static class Servico {
         final String chave;
         final String rotulo;
-        final int idPadrao;
         final String[] nomes;
 
-        Servico(String chave, String rotulo, int idPadrao, String... nomes) {
+        Servico(String chave, String rotulo, String... nomes) {
             this.chave = chave;
             this.rotulo = rotulo;
-            this.idPadrao = idPadrao;
             this.nomes = nomes;
         }
     }
 
     private static final Servico[] SERVICOS = new Servico[] {
-        new Servico("netflix", "Netflix", 8, "netflix"),
-        new Servico("prime", "Prime Video", 119, "amazonprimevideo", "primevideo"),
-        new Servico("disney", "Disney+", 337, "disneyplus", "disney"),
-        new Servico("globoplay", "Globoplay", 307, "globoplay"),
-        new Servico("max", "Max", 1899, "max", "hbomax"),
-        new Servico("apple", "Apple TV+", 350, "appletvplus", "appletv"),
-        new Servico("paramount", "Paramount+", 531, "paramountplus", "paramount")
+        new Servico("netflix", "Netflix", "netflix"),
+        new Servico("prime", "Prime Video", "amazonprimevideo", "primevideo"),
+        new Servico("disney", "Disney+", "disneyplus", "disney"),
+        new Servico("globoplay", "Globoplay", "globoplay"),
+        new Servico("max", "Max", "max", "hbomax"),
+        new Servico("apple", "Apple TV+", "appletvplus", "appletv"),
+        new Servico("paramount", "Paramount+", "paramountplus", "paramount")
     };
 
     // ---------- Modelos ----------
@@ -236,12 +234,15 @@ public class Catalogo {
         f1.nome = "Em alta hoje";
         f1.itens = cortar(emAlta, 20);
         fileiras.add(f1);
+        // Titulos ja mostrados em fileiras acima: as outras fileiras nao repetem
+        Set<Item> mostrados = new HashSet<Item>(f1.itens);
 
         // 2) Populares
         try {
             Fileira f2 = new Fileira();
-            f2.nome = "Filmes populares";
-            f2.itens = cortar(itens(pegar("/movie/popular", "&region=BR", k), "movie", unicos), 20);
+            f2.nome = "Filmes populares no Brasil";
+            f2.itens = cortar(semRepetidos(itens(pegar("/movie/popular", "&region=BR", k), "movie", unicos), mostrados), 20);
+            mostrados.addAll(f2.itens);
             if (!f2.itens.isEmpty()) {
                 fileiras.add(f2);
             }
@@ -250,8 +251,9 @@ public class Catalogo {
         }
         try {
             Fileira f3 = new Fileira();
-            f3.nome = "Series populares";
-            f3.itens = cortar(itens(pegar("/tv/popular", "", k), "tv", unicos), 20);
+            f3.nome = "S\u00e9ries populares";
+            f3.itens = cortar(semRepetidos(itens(pegar("/tv/popular", "", k), "tv", unicos), mostrados), 20);
+            mostrados.addAll(f3.itens);
             if (!f3.itens.isEmpty()) {
                 fileiras.add(f3);
             }
@@ -265,7 +267,7 @@ public class Catalogo {
             Servico sv = SERVICOS[s];
             Integer id = ids.get(sv.chave);
             if (id == null) {
-                id = sv.idPadrao;
+                continue; // o TMDB nao confirmou este servico no Brasil: a fileira nao aparece
             }
             List<Item> doServico = new ArrayList<Item>();
             String filtro = "&watch_region=BR&with_watch_monetization_types=flatrate&with_watch_providers="
@@ -289,13 +291,16 @@ public class Catalogo {
                     return a.popularidade < b.popularidade ? 1 : (a.popularidade > b.popularidade ? -1 : 0);
                 }
             });
-            Fileira f = new Fileira();
-            f.nome = "Em alta · " + sv.rotulo;
-            f.app = sv.chave;
-            f.itens = cortar(doServico, 16);
-            for (int i = 0; i < f.itens.size(); i++) {
-                f.itens.get(i).servicos.add(sv.chave);
+            // Todo titulo devolvido por este servico fica marcado como disponivel nele
+            for (int i = 0; i < doServico.size(); i++) {
+                doServico.get(i).servicos.add(sv.chave);
             }
+            List<Item> novos = semRepetidos(doServico, mostrados);
+            Fileira f = new Fileira();
+            f.nome = "Populares \u00b7 " + sv.rotulo;
+            f.app = sv.chave;
+            f.itens = cortar(novos.size() >= 8 ? novos : doServico, 16);
+            mostrados.addAll(f.itens);
             fileiras.add(f);
         }
 
@@ -419,6 +424,16 @@ public class Catalogo {
             }
         }
         return melhor;
+    }
+
+    private static List<Item> semRepetidos(List<Item> l, Set<Item> ja) {
+        List<Item> r = new ArrayList<Item>();
+        for (int i = 0; i < l.size(); i++) {
+            if (!ja.contains(l.get(i)) && !r.contains(l.get(i))) {
+                r.add(l.get(i));
+            }
+        }
+        return r;
     }
 
     private static List<Item> cortar(List<Item> l, int max) {
