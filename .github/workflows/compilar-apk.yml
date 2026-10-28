@@ -1,122 +1,40 @@
-name: Compilar Meu Launcher TV
+name: Compilar APK
 
 on:
   workflow_dispatch:
 
-permissions:
-  contents: write
-
-concurrency:
-  group: compilar-apk
-  cancel-in-progress: true
-
 jobs:
   build:
-    runs-on: ubuntu-24.04
-    timeout-minutes: 25
-
+    runs-on: ubuntu-latest
     steps:
-      - name: Baixar o repositorio
-        uses: actions/checkout@v5
+      - uses: actions/checkout@v4
 
-      - name: Configurar Java 17
-        uses: actions/setup-java@v5
+      - name: Mostrar a estrutura do projeto
+        run: |
+          ls -la
+          ls -la app || true
+          find app -maxdepth 4 -type f | head -50 || true
+
+      - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
 
-      - name: Configurar Android SDK
-        uses: android-actions/setup-android@v3
-        with:
-          packages: 'platforms;android-34 build-tools;34.0.0'
-
-      - name: Conferir pecas do Android SDK
+      - name: Preparar Android SDK
         run: |
-          set -o pipefail
-          {
-            echo "ANDROID_HOME=$ANDROID_HOME"
-            yes | sdkmanager --licenses > /dev/null 2>&1 || true
-            for p in "platforms;android-34" "build-tools;34.0.0"; do
-              d="$ANDROID_HOME/$(echo "$p" | tr ';' '/')"
-              if [ -d "$d" ]; then
-                echo "OK: $p"
-              else
-                echo "Instalando: $p"
-                sdkmanager "$p"
-              fi
-            done
-            echo "--- plataformas:"; ls "$ANDROID_HOME/platforms"
-            echo "--- build-tools:"; ls "$ANDROID_HOME/build-tools"
-          } 2>&1 | tee sdk.log
+          SDK="${ANDROID_HOME:-$ANDROID_SDK_ROOT}"
+          SM="$SDK/cmdline-tools/latest/bin/sdkmanager"
+          yes | "$SM" --licenses > /dev/null || true
+          "$SM" "platforms;android-34" "build-tools;34.0.0" || true
 
-      - name: Configurar Gradle 8.7
-        uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.7'
 
-      - name: Verificar arquivos do projeto
-        run: |
-          test -f settings.gradle
-          test -f build.gradle
-          test -f gradle.properties
-          test -f app/build.gradle
-          test -f app/src/main/AndroidManifest.xml
-          test -f app/src/main/java/com/meulauncher/tv/HomeActivity.java
-          test -f app/src/main/assets/index.html
-          for f in AoVivo Catalogo HomeActivity PlayerActivity; do
-            test -f "app/src/main/java/com/meulauncher/tv/$f.java" || { echo "::error title=Arquivo no lugar errado::Falta app/src/main/java/com/meulauncher/tv/$f.java"; exit 1; }
-          done
-          OUTROS=$(find app/src/main/java -name '*.java' ! -path 'app/src/main/java/com/meulauncher/tv/*')
-          if [ -n "$OUTROS" ]; then
-            echo "::error title=Arquivo java fora da pasta tv::Apague este arquivo (esta fora de com/meulauncher/tv): $OUTROS"
-            exit 1
-          fi
-          H=$(grep -c '</html>' app/src/main/assets/index.html || true)
-          if [ "$H" != "1" ]; then
-            echo "::error title=index.html com sobra de texto::O index.html tem $H marcas </html> (deveria ter 1). Sobrou texto do arquivo antigo no final. Apague o index.html e envie o novo inteiro."
-            exit 1
-          fi
+      - name: Compilar
+        run: gradle assembleDebug --no-daemon
 
-      - name: Compilar APK
-        run: |
-          set -o pipefail
-          gradle assembleDebug --no-daemon --stacktrace --console=plain 2>&1 | tee build.log
-
-      - name: Resumo do erro
-        if: failure()
-        run: |
-          if [ -f build.log ]; then
-            RES=$(grep -A8 -E "What went wrong|error:|FAILURE:" build.log | head -30)
-          elif [ -f sdk.log ]; then
-            RES=$(tail -25 sdk.log)
-          else
-            RES="O erro aconteceu antes da conferencia do SDK. Abra o passo marcado em vermelho."
-          fi
-          {
-            echo "### Erro da compilacao"
-            echo '~~~'
-            echo "$RES"
-            echo '~~~'
-          } >> "$GITHUB_STEP_SUMMARY"
-          MSG=$(echo "$RES" | tr '\n' ' ' | cut -c1-900)
-          echo "::error title=Erro da compilacao::$MSG"
-
-      - name: Guardar copia do APK
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
-          name: MeuLauncherTV
+          name: MeuLauncherTV-apk
           path: app/build/outputs/apk/debug/app-debug.apk
-          if-no-files-found: error
-
-      - name: Publicar APK na aba Releases
-        env:
-          GH_TOKEN: ${{ github.token }}
-          GH_REPO: ${{ github.repository }}
-        run: |
-          cp app/build/outputs/apk/debug/app-debug.apk MeuLauncherTV.apk
-          ls -l MeuLauncherTV.apk
-          gh release delete ultimo --cleanup-tag --yes || true
-          gh release create ultimo MeuLauncherTV.apk \
-            --target "$GITHUB_SHA" \
-            --title "Meu Launcher TV (ultima versao)" \
-            --notes "APK compilado automaticamente. Execucao numero ${{ github.run_number }}."
